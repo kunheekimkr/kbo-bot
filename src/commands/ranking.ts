@@ -77,7 +77,6 @@ module.exports = {
   async execute(interaction: CommandInteraction) {
     fetchTeamRankTable()
       .then(async (result) => {
-        console.log(result.data.fields);
         await interaction.reply({
           embeds: [result],
         });
