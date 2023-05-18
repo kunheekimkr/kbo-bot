@@ -3,15 +3,8 @@ import fs = require('fs');
 import path = require('path');
 import dotenv = require('dotenv');
 
+import { Command } from './interfaces/command';
 dotenv.config();
-
-interface Command {
-  data: {
-    toJSON(): object;
-    name: string;
-  };
-  execute: () => void;
-}
 
 const commands: Command[] = [];
 const commandsPath = path.join(__dirname, 'commands');
@@ -44,24 +37,21 @@ async function importCommandModules() {
 
 importCommandModules().then(() => {
   const rest = new REST().setToken(process.env.DISCORD_TOKEN!);
-  // and deploy your commands!
   (async () => {
     try {
       console.log(
         `Started refreshing ${commands.length} application (/) commands.`
       );
-
-      // The put method is used to fully refresh all commands in the guild with the current set
-      const data: any = await rest.put(
+      // The put method is used to fully refresh all commands in the guild with the current sets
+      const data: object[] = (await rest.put(
         Routes.applicationCommands(process.env.clientId!),
         { body: commands }
-      );
+      )) as object[];
 
       console.log(
         `Successfully reloaded ${data.length} application (/) commands.`
       );
     } catch (error) {
-      // And of course, make sure you catch and log any errors!
       console.error(error);
     }
   })();

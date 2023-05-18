@@ -4,11 +4,12 @@ import dotenv = require('dotenv');
 
 import { Client, Collection, Events, GatewayIntentBits } from 'discord.js';
 
+import { Command } from './interfaces/command';
 dotenv.config();
 
 declare module 'discord.js' {
   export interface Client {
-    commands: Collection<unknown, any>;
+    commands: Collection<unknown, Command>;
   }
 }
 
