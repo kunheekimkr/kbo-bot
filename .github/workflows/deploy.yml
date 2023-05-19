@@ -34,10 +34,14 @@ jobs:
           echo DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }} >> .env
           echo clientId=${{ secrets.clientId }} >> .env
           cat .env
+          
+      - name: install dpendencies
+        working-directory: ./
+        run: |
+          npm install    
 
       - name: build server files
         working-directory: ./
         run: |
-          npm install
-          npm run start
+          npm run start & 
           
