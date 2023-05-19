@@ -38,7 +38,7 @@ jobs:
       - name: install dpendencies
         working-directory: ./
         run: |
-          npm cli
+          npm ci
 
       - name: run test
         working-directory: ./
