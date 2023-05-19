@@ -82,7 +82,7 @@ module.exports = {
         });
       })
       .catch((error) => {
-        console.error('Error occurred while fetching team rank table:', error);
+        console.error('Error occurred while replying team rank table:', error);
       });
   },
 };
