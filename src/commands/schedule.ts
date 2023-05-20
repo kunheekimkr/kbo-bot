@@ -7,7 +7,6 @@ async function fetchTodayMatches(): Promise<EmbedBuilder> {
     // Get Today's Date string (YYYYMMDD)
     const now = new Date();
     const date = new Date(now.getTime() + 9 * 60 * 60 * 1000); // UTC to KST
-    console.log(date);
     const year = date.getFullYear();
     const month = ('0' + (1 + date.getMonth())).slice(-2);
     const day = ('0' + date.getDate()).slice(-2);
