@@ -5,7 +5,9 @@ import axios from 'axios';
 async function fetchTodayMatches(): Promise<EmbedBuilder> {
   try {
     // Get Today's Date string (YYYYMMDD)
-    const date = new Date();
+    const now = new Date();
+    const date = new Date(now.getTime() + 9 * 60 * 60 * 1000); // UTC to KST
+    console.log(date);
     const year = date.getFullYear();
     const month = ('0' + (1 + date.getMonth())).slice(-2);
     const day = ('0' + date.getDate()).slice(-2);
@@ -49,7 +51,7 @@ async function fetchTodayMatches(): Promise<EmbedBuilder> {
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('오늘의일정')
+    .setName('일정')
     .setDescription('오늘의 경기 일정'),
   async execute(interaction: CommandInteraction) {
     fetchTodayMatches()
