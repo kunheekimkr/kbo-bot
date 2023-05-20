@@ -62,4 +62,4 @@ jobs:
           --application-name kbobot
           --deployment-config-name CodeDeployDefault.AllAtOnce
           --deployment-group-name node-deploy-pipe
-          --s3-location bucket=kbobot/source.zip,bundleType=zip
+          --s3-location bucket=kbobot,key=source.zip,bundleType=zip
