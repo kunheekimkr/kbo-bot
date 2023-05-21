@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { CommandInteraction, EmbedBuilder, EmbedField } from 'discord.js';
+import { CommandInteraction } from 'discord.js';
 import axios from 'axios';
 import { load } from 'cheerio';
 
@@ -16,6 +16,20 @@ async function fetchScoreBoard(): Promise<string> {
 
     const crawled = $('#cphContents_cphContents_cphContents_udpRecord');
     crawled.find('div.smsScore').each((_, element) => {
+      let resultstr = '';
+
+      const abstract = $(element).find('div.score_wrap');
+      const leftTeam = $(abstract).find('p.leftTeam');
+      const rightTeam = $(abstract).find('p.rightTeam');
+      const inning = $(abstract).find('strong.flag');
+      resultstr +=
+        leftTeam.text().replace(/\s\s+/g, ' ').slice(1) +
+        'vs' +
+        rightTeam.text().replace(/\s\s+/g, ' ') +
+        '(' +
+        inning.text().replace(/\s\s+/g, ' ') +
+        ')\n';
+
       const table = $(element).find('table.tScore');
       const arr: string[][] = [];
       $(table)
@@ -48,7 +62,6 @@ async function fetchScoreBoard(): Promise<string> {
               }
             });
         });
-      let resultstr = '';
       resultstr += '-'.repeat(54) + '\n';
       for (let i = 0; i < arr.length; i++) {
         resultstr += '|';
