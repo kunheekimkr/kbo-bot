@@ -74,16 +74,7 @@ async function fetchScoreBoard(): Promise<string> {
       resultstr += '-'.repeat(54) + '\n';
       values.push('`' + resultstr + '`');
     });
-    /*
-    const field: EmbedField = {
-      name: 'KBO 프로야구 순위표',
-      value: values.join('\n'),
-      inline: false,
-    };
-    const embed = new EmbedBuilder().setFields(field);
-    return embed;
-    */
-    return values.join('\n');
+    return values.length == 0 ? '오늘은 경기가 없습니다!' : values.join('\n');
   } catch (error) {
     console.error('Error occurred while fetching Score Board:', error);
     throw error;
