@@ -22,13 +22,16 @@ async function fetchScoreBoard(): Promise<string> {
       const leftTeam = $(abstract).find('p.leftTeam');
       const rightTeam = $(abstract).find('p.rightTeam');
       const inning = $(abstract).find('strong.flag');
+      const win = $(abstract).find('p.win');
       resultstr +=
         leftTeam.text().replace(/\s\s+/g, ' ').slice(1) +
         'vs' +
         rightTeam.text().replace(/\s\s+/g, ' ') +
         '(' +
         inning.text().replace(/\s\s+/g, ' ') +
-        ')\n';
+        ')\n' +
+        win.text().replace(/\s\s+/g, ' ') +
+        '\n';
 
       const table = $(element).find('table.tScore');
       const arr: string[][] = [];
