@@ -22,7 +22,9 @@ async function fetchScoreBoard(): Promise<string> {
       const leftTeam = $(abstract).find('p.leftTeam');
       const rightTeam = $(abstract).find('p.rightTeam');
       const inning = $(abstract).find('strong.flag');
-      const win = $(abstract).find('p.win');
+      const win = $(abstract).find('p.win').find('span');
+      let pitcherResult = win.map((index, element) => $(element).text()).get().join('      ');
+      pitcherResult = pitcherResult=="" ? pitcherResult: pitcherResult + '\n';
       resultstr +=
         leftTeam.text().replace(/\s\s+/g, ' ').slice(1) +
         'vs' +
@@ -30,8 +32,7 @@ async function fetchScoreBoard(): Promise<string> {
         '(' +
         inning.text().replace(/\s\s+/g, ' ') +
         ')\n' +
-        win.text().replace(/\s\s+/g, ' ') +
-        '\n';
+        pitcherResult;
 
       const table = $(element).find('table.tScore');
       const arr: string[][] = [];
@@ -75,7 +76,7 @@ async function fetchScoreBoard(): Promise<string> {
         resultstr += '\n';
       }
       resultstr += '-'.repeat(54) + '\n';
-      values.push('`' + resultstr + '`');
+      values.push(resultstr);
     });
     return values.length == 0 ? '오늘은 경기가 없습니다!' : values.join('\n');
   } catch (error) {
@@ -91,7 +92,7 @@ module.exports = {
   async execute(interaction: CommandInteraction) {
     fetchScoreBoard()
       .then(async (result) => {
-        await interaction.reply(result);
+        await interaction.reply("```" + result + "```");
       })
       .catch((error) => {
         console.error('Error occurred while replying Score Board:', error);
