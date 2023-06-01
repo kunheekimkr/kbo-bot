@@ -62,4 +62,4 @@ jobs:
             docker rm -f $(docker ps -qa)
             docker rmi ${{ secrets.DOCKER_USERNAME }}/kbo-bot
             docker pull ${{ secrets.DOCKER_USERNAME }}/kbo-bot
-            docker run -e DISCORD_TOKEN=${{secrets.DISCORD_TOKEN}} -e clientId=${{secrets.CLIENTID}} ${{secrets.DOCKER_USERNAME}}/kbo-bot
+            docker run -d -e DISCORD_TOKEN=${{secrets.DISCORD_TOKEN}} -e clientId=${{secrets.CLIENTID}} ${{secrets.DOCKER_USERNAME}}/kbo-bot
