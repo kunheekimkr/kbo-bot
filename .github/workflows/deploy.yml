@@ -36,10 +36,6 @@ jobs:
           echo clientId=${{ secrets.clientId }} >> .env
           cat .env
 
-      - name: zip create
-        run: zip -qq -r ./source.zip .
-        shell: bash
-
       - name: install dependencies
         working-directory: ./
         run: |
@@ -50,18 +46,27 @@ jobs:
         run: |
           npm run test
 
+      - name: Build Docker Image
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/kbo-bot
+          docker push ${{ secrets.DOCKER_USERNAME }}/kbo-bot
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
-      - name: Upload to S3
-        run: |
-          aws s3 cp --region ap-northeast-2 ./source.zip s3://kbobot/source.zip
-      - name: Deploy
-        run: aws deploy create-deployment
-          --application-name kbobot
-          --deployment-config-name CodeDeployDefault.AllAtOnce
-          --deployment-group-name node-deploy-pipe
-          --s3-location bucket=kbobot,key=source.zip,bundleType=zip
+
+      - name: EC2 Docker Run
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            docker rm -f $(docker ps -qa)
+            docker rmi ${{ secrets.DOCKER_USERNAME }}/kbo-bot
+            docker pull ${{ secrets.DOCKER_USERNAME }}/kbo-bot
+            docker run -e DISCORD_TOKEN=${{secrets.DISCORD_TOKEN}} -e clientId=${{secrets.CLIENTID}} ${{secrets.DOCKER_USERNAME}}/kbo-bot
