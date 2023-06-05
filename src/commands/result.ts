@@ -104,11 +104,14 @@ module.exports = {
     .setDescription('오늘 프로야구 결과'),
   async execute(interaction: CommandInteraction) {
     // Specify the path to the ChromeDriver executable
-    const chromeDriverPath = './chromedriver';
+    const chromeDriverPath = '/usr/src/chrome/chromedriver';
 
     // Set up Chrome options
     const options = new chrome.Options();
     options.addArguments('--headless');
+    options.addArguments('--single-process');
+    options.addArguments('--no-sandbox');
+    options.addArguments('--disable-dev-shm-usage');
 
     // Create a new WebDriver instance with ChromeDriver
     const serviceBuilder = new ServiceBuilder(chromeDriverPath);
