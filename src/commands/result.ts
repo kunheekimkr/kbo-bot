@@ -1,15 +1,46 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { CommandInteraction } from 'discord.js';
-import axios from 'axios';
+import { Builder } from 'selenium-webdriver';
+import chrome from 'selenium-webdriver/chrome';
+import { ServiceBuilder } from 'selenium-webdriver/chrome';
 import { load } from 'cheerio';
+
+async function getWebsiteHTML(): Promise<string> {
+  // Specify the path to the ChromeDriver executable
+  const chromeDriverPath = './chromedriver';
+
+  // Set up Chrome options
+  const options = new chrome.Options();
+  let html = '';
+
+  // Create a new WebDriver instance with ChromeDriver
+  const serviceBuilder = new ServiceBuilder(chromeDriverPath);
+  const driver = await new Builder()
+    .forBrowser('chrome')
+    .setChromeOptions(options)
+    .setChromeService(serviceBuilder)
+    .build();
+
+  try {
+    // Navigate to the website
+    await driver.get('https://www.koreabaseball.com/Schedule/ScoreBoard.aspx');
+
+    // Get the HTML of the page
+    html = await driver.getPageSource();
+  } catch (error) {
+    console.error('Error occurred while fetching Score Board:', error);
+    throw error;
+  } finally {
+    // Quit the WebDriver
+    await driver.quit();
+  }
+  return html;
+}
 
 async function fetchScoreBoard(): Promise<string> {
   try {
     // 크롤링
-    const response = await axios.get(
-      'https://www.koreabaseball.com/Schedule/ScoreBoard.aspx'
-    );
-    const html = response.data;
+    const html = await getWebsiteHTML();
     const $ = load(html);
     // Embed 메시지로 반환해 가독성 좋게 순위표 출력
     const values: string[] = [];
@@ -23,8 +54,12 @@ async function fetchScoreBoard(): Promise<string> {
       const rightTeam = $(abstract).find('p.rightTeam');
       const inning = $(abstract).find('strong.flag');
       const win = $(abstract).find('p.win').find('span');
-      let pitcherResult = win.map((index, element) => $(element).text()).get().join('      ');
-      pitcherResult = pitcherResult=="" ? pitcherResult: pitcherResult + '\n';
+      let pitcherResult = win
+        .map((index, element) => $(element).text())
+        .get()
+        .join('      ');
+      pitcherResult =
+        pitcherResult == '' ? pitcherResult : pitcherResult + '\n';
       resultstr +=
         leftTeam.text().replace(/\s\s+/g, ' ').slice(1) +
         'vs' +
@@ -92,7 +127,7 @@ module.exports = {
   async execute(interaction: CommandInteraction) {
     fetchScoreBoard()
       .then(async (result) => {
-        await interaction.reply("```" + result + "```");
+        await interaction.reply('```' + result + '```');
       })
       .catch((error) => {
         console.error('Error occurred while replying Score Board:', error);
