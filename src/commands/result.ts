@@ -103,22 +103,17 @@ module.exports = {
     .setName('결과')
     .setDescription('오늘 프로야구 결과'),
   async execute(interaction: CommandInteraction) {
-    // Specify the path to the ChromeDriver executable
-    const chromeDriverPath = '/usr/src/chrome/chromedriver';
-
+    await interaction.deferReply();
     // Set up Chrome options
     const options = new chrome.Options();
     options.addArguments('--headless');
-    options.addArguments('--single-process');
     options.addArguments('--no-sandbox');
     options.addArguments('--disable-dev-shm-usage');
 
     // Create a new WebDriver instance with ChromeDriver
-    const serviceBuilder = new ServiceBuilder(chromeDriverPath);
     const driver = await new Builder()
       .forBrowser('chrome')
       .setChromeOptions(options)
-      .setChromeService(serviceBuilder)
       .build();
     let html: string;
     try {
@@ -147,13 +142,13 @@ module.exports = {
       forward
     );
     const result = await fetchScoreBoard(html);
-    const response = await interaction.reply({
+    const response = await interaction.editReply({
       content: '```' + result + '```',
       components: [row],
     });
     const collector = response.createMessageComponentCollector({
       componentType: ComponentType.Button,
-      time: 60000,
+      time: 300000,
     });
     collector.on('collect', async (i) => {
       const selected = i.customId;
@@ -184,7 +179,6 @@ module.exports = {
     });
     collector.on('end', async () => {
       driver.quit();
-      console.log('Collector ended!');
     });
   },
 };

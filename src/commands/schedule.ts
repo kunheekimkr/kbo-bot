@@ -95,6 +95,7 @@ module.exports = {
     .setDescription('가까운 경기 일정'),
 
   async execute(interaction: CommandInteraction) {
+    await interaction.deferReply();
     const back = new ButtonBuilder()
       .setCustomId('prev')
       .setLabel('⏴')
@@ -110,13 +111,13 @@ module.exports = {
 
     const date = new Date();
     const result = await fetchTodayMatches(date);
-    const response = await interaction.reply({
+    const response = await interaction.editReply({
       embeds: [result],
       components: [row],
     });
     const collector = response.createMessageComponentCollector({
       componentType: ComponentType.Button,
-      time: 60000,
+      time: 300000,
     });
     collector.on('collect', async (i) => {
       const selected = i.customId;
