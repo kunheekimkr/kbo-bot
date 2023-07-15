@@ -1,6 +1,7 @@
 import fs = require('fs');
 import path = require('path');
 import dotenv = require('dotenv');
+import express = require('express');
 
 import { Client, Collection, GatewayIntentBits } from 'discord.js';
 
@@ -68,4 +69,16 @@ importCommandModules().then(() => {
   importEventModules().then(() => {
     client.login(process.env.DISCORD_TOKEN);
   });
+});
+
+// ECS health check
+const app = express();
+const PORT = 80; // Choose a port for your health check
+
+app.get('/health', (req, res) => {
+  res.sendStatus(200); // Return a success status code
+});
+
+app.listen(PORT, () => {
+  console.log(`Health check server running on port ${PORT}`);
 });
