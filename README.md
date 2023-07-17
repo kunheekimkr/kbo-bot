@@ -69,5 +69,5 @@
 
 - [ ] Testing
 - [ ] Live Commentary Updates
-- [ ] Check Upcomming/Past Results & Schedules
+- [x] Check Upcomming/Past Results & Schedules
 - [ ] Voice / Video livestream over live channel
