@@ -40,7 +40,7 @@
 
 ## CI/CD
 
-![CI/CD](./images/CICD.png)
+![CI/CD](./images/CICD.png?)
 
 
 
